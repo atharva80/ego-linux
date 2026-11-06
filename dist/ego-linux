@@ -306,8 +306,8 @@ function renderAX(nodes, opts, refs, lines, frameId, baseDepth, visMap) {
       if (backend) {
         let loc; if (INTERACTIVE.has(role) && name) loc = `${role}:${role}[name=${JSON.stringify(name)}]`;
         refs.push({ backendNodeId: backend, role, name, ...(loc ? { loc } : {}), ...(frameId ? { frameId, frameProvenance: "frame" } : {}) });
-        const mark = (opts.includeActionMarks && INTERACTIVE.has(role)) ? " [action]" : "";
-        lines.push(`${"  ".repeat(depth)}${role}${name ? ` "${name.replace(/"/g, '\\"')}"` : ""}${mark} [ref=${backend}${loc ? `, loc=${loc}` : ""}]`);
+        const mark = (opts.includeActionMarks && INTERACTIVE.has(role)) ? "• " : "";
+        lines.push(`${"  ".repeat(depth)}${mark}${role}${name ? ` "${name.replace(/"/g, '\\"')}"` : ""} [ref=${backend}${loc ? `, loc=${loc}` : ""}]`);
       } else if (name || role !== "generic") {
         lines.push(`${"  ".repeat(depth)}${role}${name ? ` "${name.replace(/"/g, '\\"')}"` : ""}`);
       }
