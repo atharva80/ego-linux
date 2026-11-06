@@ -605,6 +605,7 @@ if (SERVE) {
         res.writeHead(200, {"content-type": "image/png"}); res.end(Buffer.from(shotRes.data, "base64")); return;
       }
       if (u.pathname === "/api/tabs") { json(res, await ego.listTabs()); return; }
+      if (u.pathname === "/api/activate" && req.method === "POST") { const b = await body(req); const t = tasks.get(selected); if (!t) { json(res, { error: "no space" }); return; } t.activatedTargetId = b.targetId; await cdpCall("Target.activateTarget", { targetId: b.targetId }).catch(() => {}); json(res, { ok: true }); return; }
       if (u.pathname === "/api/navigate" && req.method === "POST") { const b = await body(req); const t = tasks.get(selected); const tab = await ensureTab(t); const sid = await attach(tab.targetId); await cdpCall("Page.navigate", { url: b.url }, sid); json(res, { ok: true }); return; }
       if (u.pathname === "/api/chat" && req.method === "POST") {
         const b = await body(req);
