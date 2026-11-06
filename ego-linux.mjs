@@ -50,6 +50,8 @@ if (argv.includes("-h") || argv.includes("--help")) {
 
 Usage:
   ego-linux <<'JS'        # pipe agent JS on stdin (taskSpace/page helpers)
+  ego-browser nodejs <<'JS'   # same, ego-browser CLI compatibility
+  ego-browser nodejs -e 'JS'   # inline script
   ego-linux skill          # print the ego-browser skill guide
   ego-linux status         # list Spaces in the persistent daemon
   ego-linux stop           # stop the daemon + browser
@@ -122,6 +124,26 @@ if (!SERVE && argv[0] === "status" && !NO_DAEMON) {
   else console.log("daemon not running (next ego-linux run will start it)");
   process.exit(0);
 }
+// ego-browser CLI compatibility (RE: Rust helper surface):
+//   ego-browser nodejs [-e CODE | FILE] [--sdk-path PATH] [stdin]
+//   ego-browser skill | --version | -h
+// Invoked as "ego-browser" (symlink), bare args are treated as nodejs.
+let CLI_CODE = null, CLI_SDK_PATH = null;
+{
+  const prog = (process.argv[1] || "").includes("ego-browser") ? "ego-browser" : "ego-linux";
+  let args = argv.slice();
+  if (prog === "ego-browser" && args[0] !== "nodejs" && !["skill", "status", "stop", "gui", "import-chrome", "serve", "--help", "-h", "--version", "version"].includes(args[0])) args = ["nodejs", ...args];
+  if (args[0] === "nodejs") {
+    args = args.slice(1);
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === "-e" || args[i] === "--eval") CLI_CODE = args[++i] ?? "";
+      else if (args[i] === "--sdk-path") CLI_SDK_PATH = args[++i] ?? null;
+      else if (args[i].startsWith("--sdk-path=")) CLI_SDK_PATH = args[i].slice(11);
+      else if (!args[i].startsWith("-")) { try { CLI_CODE = readFileSync(args[i], "utf8"); } catch (e) { console.error(`ego-browser: cannot read ${args[i]}: ${e.message}`); process.exit(2); } }
+    }
+    if (CLI_SDK_PATH) process.env.EGO_BROWSER_BUNDLE = CLI_SDK_PATH;
+  }
+}
 if (!SERVE && !NO_DAEMON && argv[0] !== "status" && argv[0] !== "gui") {
   if (!(await daemonAlive())) {
     mkdirSync(DAEMON_DIR, { recursive: true });
@@ -131,7 +153,7 @@ if (!SERVE && !NO_DAEMON && argv[0] !== "status" && argv[0] !== "gui") {
     d.unref();
     for (let i = 0; i < 50 && !(await daemonAlive()); i++) await new Promise(r => setTimeout(r, 100));
   }
-  const code = readFileSync(0, "utf8");
+  const code = CLI_CODE ?? readFileSync(0, "utf8");
   const resp = await daemonRequest(code);
   const m = resp.match(/\n__EXIT__:(\d+)\n?$/);
   if (m) { process.stdout.write(resp.slice(0, m.index + 1)); process.exit(Number(m[1])); }
@@ -549,7 +571,7 @@ if (SERVE) {
   // --- GUI: local web dashboard ("ego home" equivalent), served by the daemon ---
   const GUI_PORT = Number(process.env.EGO_LINUX_GUI_PORT || "8765");
   const http = await import("node:http");
-  const guiHtml = `<!doctype html><html><head><meta charset="utf-8"><title>ego home (linux)</title><style>body{font:14px system-ui;background:#0f1115;color:#e6e6e6;margin:0;display:flex;height:100vh}aside{width:260px;background:#171a21;padding:12px;overflow:auto}main{flex:1;display:flex;flex-direction:column;padding:12px;gap:8px;overflow:auto}.space{padding:8px;border-radius:8px;cursor:pointer;margin-bottom:6px;background:#22262f}.space.on{background:#2f5fd0}.space small{opacity:.6}button{background:#2f5fd0;color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;margin:2px}button.ghost{background:#333a47}input{background:#22262f;color:#e6e6e6;border:1px solid #333;padding:6px;border-radius:6px}pre{background:#0a0c10;padding:10px;border-radius:8px;white-space:pre-wrap;max-height:40vh;overflow:auto}img{max-width:100%;border-radius:8px;border:1px solid #333}</style></head><body><aside><h3>ego home · linux</h3><div id=spaces></div><input id=newname placeholder="space name"><button onclick="createSpace()">+ New Space</button><p style="opacity:.6">Headed: EGO_LINUX_HEADLESS=0 · Attach: EGO_LINUX_CDP_URL=…</p></aside><main><div><input id=url placeholder="https://…" size=40><button onclick="nav()">Go</button><button class=ghost onclick="snap()">Snapshot</button><button class=ghost onclick="act('handoff')">Hand off</button><button class=ghost onclick="act('takeover')">Take over</button><button class=ghost onclick="act('finish')">Finish</button><button class=ghost onclick="act('close')">Close</button></div><div id=info></div><img id=shot alt="screenshot"><pre id=out></pre></main><script>let cur=null;async function api(p,o){let r=await fetch(p,o);return r.json()}async function load(){let d=await api('/api/spaces');spaces.innerHTML=d.taskSpaces.map(s=>'<div class="space '+(s.id===cur?'on':'')+'" onclick="sel('+s.id+')"><b>'+s.name+'</b> <small>#'+s.id+' · '+s.ownership+(s.lastError?' · ⚠ '+s.lastError:'')+'<br>'+(s.recentTabTitles||[]).join(', ')+'</small></div>').join('')||'<p>No spaces yet</p>';if(cur!=null){shot.src='/api/screenshot?id='+cur+'&t='+Date.now()}}async function sel(id){cur=id;await api('/api/select',{method:'POST',body:JSON.stringify({id})});load();snap()}async function createSpace(){let n=newname.value||('space-'+Date.now()%10000);let d=await api('/api/space',{method:'POST',body:JSON.stringify({name:n})});cur=d.id;load();snap()}async function nav(){await api('/api/navigate',{method:'POST',body:JSON.stringify({id:cur,url:url.value})});load();snap()}async function snap(){if(cur==null)return;let d=await api('/api/snapshot?id='+cur);out.textContent=d.content||JSON.stringify(d);load()}async function act(a){await api('/api/'+a,{method:'POST',body:JSON.stringify({id:cur})});load();snap()}load();setInterval(()=>{if(cur!=null)shot.src='/api/screenshot?id='+cur+'&t='+Date.now()},3000)</script></body></html>`;
+  const guiHtml = `<!doctype html><html><head><meta charset="utf-8"><title>ego home (linux)</title><style>body{font:14px system-ui;background:#0f1115;color:#e6e6e6;margin:0;display:flex;flex-direction:column;height:100vh}#mainland{height:44px;background:#171a21;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #222}#wrap{flex:1;display:flex;min-height:0}#strip{width:64px;background:#171a21;border-right:1px solid #222;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:6px;overflow:auto}.island{width:44px;height:44px;border-radius:50%;background:#22262f;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}.island.on{background:#2f5fd0;box-shadow:0 0 0 2px #4f8cff}.island small{display:block;font-size:9px;opacity:.6}main{flex:1;display:flex;flex-direction:column;padding:12px;gap:8px;overflow:auto}button{background:#2f5fd0;color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;margin:2px}button.ghost{background:#333a47}input{background:#22262f;color:#e6e6e6;border:1px solid #333;padding:6px;border-radius:6px}pre{background:#0a0c10;padding:10px;border-radius:8px;white-space:pre-wrap;max-height:38vh;overflow:auto}img{max-width:100%;border-radius:8px;border:1px solid #333}.ring{border:2px solid #4f8cff;border-radius:50%;padding:2px 8px}</style></head><body><div id=mainland><b>ego home</b><span class=ring>linux</span><input id=url placeholder="https://…" size=42><button onclick="nav()">Go</button><button class=ghost onclick="snap()">Snapshot</button><button class=ghost onclick="act('handoff')">Hand off</button><button class=ghost onclick="act('takeover')">Take over</button><button class=ghost onclick="act('finish')">Finish</button><button class=ghost onclick="act('close')">Close</button></div><div id=wrap><div id=strip></div><main><div id=info></div><img id=shot alt="screenshot"><pre id=out></pre><div><input id=newname placeholder="space name"><button onclick="createSpace()">+ New Space (island)</button><span style="opacity:.6">Headed: EGO_LINUX_HEADLESS=0 · Attach: EGO_LINUX_CDP_URL=…</span></div></main></div><script>let cur=null;async function api(p,o){let r=await fetch(p,o);return r.json()}async function load(){let d=await api('/api/spaces');strip.innerHTML=d.taskSpaces.map(s=>'<div class="island '+(s.id===cur?'on':'')+'" onclick="sel('+s.id+')" title="'+s.name+'">'+s.name.slice(0,2).toUpperCase()+'</div>').join('')+'<div class="island" onclick="createSpace()">+</div>';info.textContent=d.taskSpaces.filter(s=>s.id===cur).map(s=>s.name+' #'+s.id+' · '+s.ownership+(s.lastError?' · ⚠ '+s.lastError:'')+' · '+(s.recentTabTitles||[]).join(', ')).join('');if(cur!=null)shot.src='/api/screenshot?id='+cur+'&t='+Date.now()}async function sel(id){cur=id;await api('/api/select',{method:'POST',body:JSON.stringify({id})});load();snap()}async function createSpace(){let n=newname.value||('space-'+Date.now()%10000);let d=await api('/api/space',{method:'POST',body:JSON.stringify({name:n})});cur=d.id;load();snap()}async function nav(){await api('/api/navigate',{method:'POST',body:JSON.stringify({id:cur,url:url.value})});load();snap()}async function snap(){if(cur==null)return;let d=await api('/api/snapshot?id='+cur);out.textContent=d.content||JSON.stringify(d);load()}async function act(a){await api('/api/'+a,{method:'POST',body:JSON.stringify({id:cur})});load();snap()}load();setInterval(()=>{if(cur!=null)shot.src='/api/screenshot?id='+cur+'&t='+Date.now()},3000)</script></body></html>`;
   const json = (res, obj) => { res.writeHead(200, {"content-type": "application/json"}); res.end(JSON.stringify(obj)); };
   const body = async (req) => { let b = ""; for await (const c of req) b += c; return b ? JSON.parse(b) : {}; };
   http.createServer(async (req, res) => {
@@ -577,7 +599,7 @@ if (SERVE) {
   }).listen(GUI_PORT, "127.0.0.1", () => console.error(`ego-linux GUI: http://127.0.0.1:${GUI_PORT}/`));
 } else {
   try {
-    const code = readFileSync(0, "utf8");
+    const code = CLI_CODE ?? readFileSync(0, "utf8");
     await bundle.runMain({ argv: [], stdinText: code });
   } finally { kill(); try { ws.close(); } catch {} setTimeout(() => process.exit(process.exitCode || 0), 200); }
 }

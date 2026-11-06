@@ -20,6 +20,8 @@ echo "== install =="
 mkdir -p ~/.local/bin ~/.local/share/applications ~/.local/share/icons/hicolor/scalable/apps
 cp "$ROOT/dist/ego-linux" ~/.local/bin/ego-linux
 chmod +x ~/.local/bin/ego-linux
+ln -sf ~/.local/bin/ego-linux ~/.local/bin/ego-browser
+echo "linked ~/.local/bin/ego-browser -> ego-linux (agent CLI compatibility)"
 cp "$ROOT/ego-linux.desktop" ~/.local/share/applications/
 cp "$ROOT/ego-linux.svg" ~/.local/share/icons/hicolor/scalable/apps/ego-linux.svg
 update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
