@@ -1,0 +1,504 @@
+file: /home/atharva/egolite_build/RE/bin/egob
+arch: aarch64 platform: mac-aarch64
+load_time_s: 86.7
+functions: 5810
+
+== symbols (ego/main) ==
+0x100121000 _ego_cli$cxxbridge1$202$parse_invocation
+0x100121b18 _ego_cli$cxxbridge1$202$parse_skill_options
+0x100199e44 _ego_cli$cxxbridge1$202$parse_nodejs_options
+
+== strings (egoAutomated/SnapshotSubtree/showAgentGesture/taskSpace) ==
+0x10019d281 '`bash\nego-browser nodejs <<\'EOF\'\nconst task = await taskSpace("inspect example page");\nconst page = task.page("p1");\nawa'
+0x10019d381 'EOF\n```\n\nWhen a sandbox blocks heredoc input, use `-e` instead. Use single quotes around the code and double quotes for '
+0x10019dd81 '`taskSpace(name)` resumes your own space with that name instead of creating a second one. If the name belongs to a user-'
+0x10019e081 'js\n// Later round: use the space id and Page label printed earlier.\nconst resumed = await taskSpace(7);\nconst source = r'
+0x1001a1081 'ffered event array; it is not an EventEmitter.\n\nPage sessions hide page console messages from CDP so sites cannot detect'
+0x1001a1e81 '. `listTaskSpaces()` entries expose that id as `id` (`spaceId` exists only on a TaskSpace handle), so pass `entry.id` to'
+
+== HLIL of parse_invocation / main (first 3 ego funcs) ==
+
+--- _ego_cli$cxxbridge1$202$parse_invocation @ 0x100121000 ---
+int64_t x8 = *(arg1 + 0x10)
+char const* const* var_3e0
+void* var_3c0
+int128_t* var_3b8
+int64_t var_380
+void* var_378
+int64_t i_4
+int128_t var_348
+uint64_t __n
+
+if (x8 == 0)
+    var_3e0 = nullptr
+    int64_t var_3d8_1 = 8
+    int64_t var_3d0_1 = 0
+    label_100121134:
+    sub_100199138(&var_348)
+    sub_10011f84c(&var_380, &var_348, &var_3e0)
+    int128_t v0_2
+    int128_t v1_1
+    v0_2, v1_1 = sub_100120140(&var_348)
+    int64_t result
+    int64_t x9_6
+    uint64_t __n_6
+    int64_t x11
+    int64_t x12
+    int64_t i_2
+    int64_t x20_5
+    uint64_t __n_3
+    char x22_5
+    char x23_2
+    int64_t x24_1
+    uint64_t __n_4
+    int64_t x26_1
+    int64_t x27_2
+    void* x28_1
+    
+    if (var_380 == -1)
+        var_3c0 = var_378
+        var_348.q = 0
+        var_348:8.q = 1
+        int64_t var_338 = 0
+        
+        if ((sub_100120d14(&var_3c0, &var_348, &data_1001ca388) & 1) == 0)
+            int64_t x19_4 = var_348.q
+            __n_3 = var_348:8.q
+            result = sub_10011ff68(var_378)
+            x12 = var_338
+            x11 = x19_4
+            i_2 = 0
+            x9_6 = 0
+            __n_6 = 0
+            x24_1 = 0
+            x23_2 = 0
+            x22_5 = 0
+            __n_4 = 0
+            x27_2 = 0
+            x28_1 = 8
+            x26_1 = 1
+            x20_5 = 1
+            label_100121404:
+            *arg2 = x27_2
+            arg2[1] = x28_1
+            arg2[2] = i_2
+            arg2[3] = x9_6
+            arg2[4] = x20_5
+            arg2[5] = __n_6
+            arg2[6] = x24_1
+            arg2[7] = x26_1
+            arg2[8] = __n_4
+            arg2[9].b = x22_5
+            *(arg2 + 0x49) = x23_2
+            arg2[0xa] = x11
+            arg2[0xb] = __n_3
+            arg2[0xc] = x12
+            return result
+    else
+        var_3c0.o = var_380.o
+        int64_t var_3b0
+        var_3b0.o = i_4.o
+        int64_t var_350
+        int64_t var_390_1 = var_350
+        
+        if (var_3b0 == 0)
+            label_100121330:
+            x27_2 = 0
+            i_2 = 0
+            x28_1 = 8
+            label_100121350:
+            sub_10011fe04(&var_348, &var_3c0, "ego-server-nameserver-name--vers…", 0xf)
+            
+            if (var_348.q == 2)
+                void* x0_19 = var_348:8.q
+                uint64_t __n_2
+                int64_t var_3e8_1
+                
+                if (x0_19 == 0)
+                    __n_2 = 0
+                    var_3e8_1 = 0
+                    x20_5 = 1
+                else
+                    sub_100114408(x0_19, &var_348)
+                    x20_5 = var_348:8.q
+                    __n_2 = __n
+                    var_3e8_1 = var_348.q
+                
+                sub_10011fe04(&var_348, &var_3c0, "server-name--version--helpego-cl…", 0xb)
+                
+                if (var_348.q == 2)
+                    void* x0_21 = var_348:8.q
+                    
+                    if (x0_21 == 0)
+                        x24_1 = 0
+                        __n_4 = 0
+                        x26_1 = 1
+                    else
+                        sub_100114408(x0_21, &var_348)
+                        x24_1 = var_348.q
+                        x26_1 = var_348:8.q
+                        __n_4 = __n
+                    
+                    x22_5 = sub_100127cb0(&var_3c0, "helptrue\x1b[0mkindZeroBOLD\x1b[…", 4)
+                    x23_2 = sub_100127cb0(&var_3c0, "versioncommand_argverror: `ego-c…", 7)
+                    result = sub_100120738(&var_3c0)
+                    x12 = 0
+                    x11 = 0
+                    __n_3 = 1
+                    __n_6 = __n_2
+                    x9_6 = var_3e8_1
+                    goto label_100121404
+        else
+            int64_t x19_3 = 0
+            int64_t x21_2 = 0
+            int64_t x22_2 = var_3b0 << 4
+            void* x23_1 = var_3b8 + 8
+            
+            while (*x23_1 != 0xc || _memcmp(*(x23_1 - 8), "command_argverror: `ego-cli node…", 0xc) != 0)
+                x21_2 += 1
+                x19_3 += 0x68
+                x23_1 += 0x10
+                int64_t temp0_1 = x22_2
+                x22_2 -= 0x10
+                
+                if (temp0_1 == 0x10)
+                    goto label_100121330
+            
+            int128_t var_360
+            
+            if (x21_2 u< var_360:8.q)
+                int32_t* x20_2 = var_360.q + x19_3
+                var_348.q = 0x26fc13f215ec7275
+                var_348:8.q = -0x4802790766e15335
+                sub_100127e48(x20_2, &var_348, &var_380)
+                
+                if (((var_380 ^ 0x26fc13f215ec7275) | (var_378 ^ 0xb7fd86f8991eaccb)) == 0)
+                    int64_t x0_11 = sub_100127f0c(x20_2)
+                    int64_t x8_21 = *(x20_2 + 0x38)
+                    var_348.q = sub_10012097c
+                    var_348:8.q = x8_21
+                    __n = x8_21 + *(x20_2 + 0x40) * 0x18
+                    int64_t var_330_1 = 0
+                    int64_t var_328_1 = -0x4802790766e15335
+                    int64_t var_320_1 = 0
+                    int64_t var_310_1 = x0_11
+                    sub_100120a94(&var_380, &var_348)
+                    x27_2 = var_380
+                    x28_1 = var_378
+                    i_2 = i_4
+                    
+                    if (i_2 == 0)
+                        goto label_100121350
+                    
+                    int32_t x0_14
+                    
+                    if (*(x28_1 + 0x10) == 6)
+                        x0_14 = _memcmp(*(x28_1 + 8), "nodejs--evalskillinput-typeprint…", 6)
+                    
+                    int64_t var_3e8_2
+                    int64_t x8_32
+                    
+                    if (*(x28_1 + 0x10) == 6 && x0_14 == 0)
+                        sub_100198734(&var_348, x28_1 + 0x18, x28_1 + i_2 * 0x18)
+                        
+                        if (var_348.q != -1)
+                            sub_100120738(&var_348)
+                            goto label_100121350
+                        
+                        int64_t x8_74 = var_348:8.q
+                        
+                        if (x8_74 == -1)
+                            goto label_100121350
+                        
+                        var_3e8_2 = x8_74
+                        __n_3 = __n
+                        x8_32 = var_330_1
+                    else
+                        int64_t x20_3 = i_2 * 0x18
+                        void* x22_3 = x28_1 + 0x10
+                        
+                        while (true)
+                            int16_t* __s1 = *(x22_3 - 8)
+                            int64_t x8_30 = *x22_3
+                            
+                            if (x8_30 != 6)
+                                if (x8_30 != 2 || zx.d(*__s1) != 0x652d)
+                                    goto label_100121468
+                                
+                                goto label_100121494
+                            
+                            __s1 = _memcmp(__s1, "--evalskillinput-typeprintstrip-…", 6)
+                            
+                            if (__s1.d == 0)
+                                label_100121494:
+                                __rustc::__rust_no_alloc_shim_is_unstable_v2(__s1)
+                                uint64_t __n_5 = sub_1001173f8(0x33, 1)
+                                
+                                if (__n_5 == 0)
+                                    sub_1001973ec()
+                                    noreturn
+                                
+                                __n_3 = __n_5
+                                __builtin_strncpy(__n_5, "error: -e/--eval must be used with `ego-cli nodejs`", 0x33)
+                                var_3e8_2 = 0x33
+                                x8_32 = 0x33
+                                break
+                            
+                            label_100121468:
+                            x22_3 += 0x18
+                            int64_t temp2_1 = x20_3
+                            x20_3 -= 0x18
+                            
+                
+
+--- _ego_cli$cxxbridge1$202$parse_skill_options @ 0x100121b18 ---
+int64_t x22
+int64_t var_30 = x22
+int64_t x24 = *(arg1 + 0x10)
+
+if (x24 u<= 0x555555555555554)
+    void* x20_1 = *(arg1 + 8)
+    __rustc::__rust_no_alloc_shim_is_unstable_v2()
+    int64_t* x0_2 = sub_1001173f8((x24 + 1) * 0x18, 8)
+    
+    if (x0_2 != 0)
+        int64_t var_588 = x24 + 1
+        int64_t* var_580 = x0_2
+        __rustc::__rust_no_alloc_shim_is_unstable_v2()
+        int64_t x0_3 = sub_1001173f8(5, 1)
+        
+        if (x0_3 == 0)
+            sub_1001973ec()
+            noreturn
+        
+        __builtin_strncpy(x0_3, "skill", 5)
+        *x0_2 = 5
+        x0_2[1] = x0_3
+        x0_2[2] = 5
+        int64_t var_570
+        int64_t x21
+        
+        if (x24 == 0)
+            x21 = 1
+        else
+            void* x22_1 = &x0_2[3]
+            x21 = 1
+            
+            do
+                sub_100114408(x20_1, &var_570)
+                *x22_1 = var_570.o
+                int64_t var_560
+                *(x22_1 + 0x10) = var_560
+                x21 += 1
+                x22_1 += 0x18
+                x20_1 += 0x18
+            while (neg.q(x24) + x21 != 1)
+        
+        int64_t var_578 = x21
+        int64_t var_520 = 0
+        int64_t var_528 = 0
+        int64_t var_4c0 = 0
+        int64_t var_4c8 = 0
+        var_570 = 0
+        int64_t var_560_1 = 1
+        int64_t var_558 = 0
+        int64_t var_550 = -1
+        int64_t var_538 = 0
+        int64_t var_530 = 8
+        int64_t var_510 = 0
+        int64_t var_518 = 4
+        int64_t var_508 = 0
+        int64_t var_500 = 8
+        int64_t var_4f0 = 0
+        int64_t var_4f8 = 0
+        int64_t var_4e0 = 0
+        int64_t var_4e8 = 8
+        int64_t var_4d8 = 0
+        int64_t var_4d0 = 8
+        int64_t var_4b0 = 0
+        int64_t var_4b8 = 8
+        int64_t var_4a8 = 0
+        int64_t var_4a0 = 8
+        int64_t var_490 = 0
+        int64_t var_498 = 0
+        int64_t var_480 = 0
+        int64_t var_488 = 8
+        int64_t var_478 = 0
+        int64_t var_470 = 8
+        int64_t var_468 = 0
+        int64_t var_460 = -1
+        int64_t var_448 = -1
+        int64_t var_430 = -1
+        int64_t var_418 = -1
+        int64_t var_400 = -1
+        int64_t var_3e8 = -1
+        int64_t var_3d0 = -1
+        int64_t var_3b8 = -1
+        int64_t var_3a0 = -1
+        int64_t var_388 = -1
+        int64_t var_370 = -1
+        int64_t var_358 = -1
+        char const* const var_340 = "skillinput-typeprintstrip-typess…"
+        int64_t var_338 = 5
+        int64_t var_330 = 0
+        int64_t var_320 = 0
+        int64_t var_310 = 0
+        int64_t var_300 = 0
+        int64_t var_2f0 = 0
+        int64_t var_2e0 = 0
+        int64_t var_2d0 = 0
+        int64_t var_2c0 = 0
+        int64_t var_2b8 = 0x280000ffffffff
+        int32_t var_2b0 = 0x280000
+        char var_2ac = 0
+        int64_t var_a8 = -1
+        char var_54 = 0xff
+        int64_t var_258 = -1
+        int64_t var_240 = 0
+        int64_t var_238 = 8
+        int64_t var_230 = 0
+        int64_t var_228 = 0
+        int64_t var_220 = 8
+        int64_t var_218 = 0
+        int64_t var_210 = 0
+        int64_t var_208 = 8
+        int64_t var_200 = 0
+        int64_t var_1f8 = 0
+        int64_t var_1f0 = 8
+        int64_t var_1e8 = 0
+        int64_t var_1e0 = 0
+        int64_t var_1d8 = 8
+        int64_t var_1d0 = 0
+        int64_t var_1c8 = 0
+        int64_t var_1c0 = 8
+        int64_t var_1b0 = 0
+        int64_t var_1b8 = 0
+        int64_t var_1a8 = 8
+        int64_t var_1a0 = 0
+        int64_t var_198 = 0
+        int64_t var_190 = 8
+        int64_t var_180 = 0
+        int64_t var_188 = 0
+        int64_t var_60 = -1
+        int64_t var_178 = 8
+        int64_t var_170 = 0
+        int64_t var_168 = 0
+        int64_t var_160 = 4
+        int64_t var_150 = 0
+        int64_t var_158 = 0
+        int64_t var_148 = 8
+        int64_t var_140 = 0
+        int64_t var_138 = 0
+        int64_t var_130 = 8
+        int64_t var_120 = 0
+        int64_t var_128 = 0
+        int64_t var_118 = 8
+        int64_t var_110 = 0
+        int64_t var_108 = 0
+        int64_t var_100 = 8
+        int64_t var_70 = 0
+        int64_t var_280 = 0
+        int64_t var_270 = 0
+        int64_t var_f0 = 0
+        int64_t var_f8 = 0
+        int64_t var_e8 = 8
+        int64_t var_e0 = 0
+        int64_t var_d8 = 0
+        int64_t var_d0 = 8
+        int64_t var_c0 = -1
+        int64_t var_c8 = 0
+        void* const var_90 = "sdk-pat"
+        int64_t var_88 = 8
+        void* const var_80 = "sdk-pat"
+        int64_t var_78 = 8
+        int64_t* var_2a8 = nullptr
+        int64_t var_298
+        __builtin_memcpy(&var_298, "\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00", 0x18)
+        int32_t var_58 = 0x20
+        sub_100127b60(&var_570, &var_2a8)
+        int64_t var_850
+        _memcpy(&var_850, &var_570, 0x2c8)
+        sub_10011f84c(&var_570, &var_850, &var_588)
+        sub_100120140(&var_850)
+        int64_t result
+        int64_t x20_2
+        int64_t x21_2
+        void* x22_2
+        int64_t x23_2
+        int64_t x24_1
+        int64_t x25_2
+        
+        if (var_570 == -1)
+            int64_t* var_568
+            var_2a8 = var_568
+            var_850 = 0
+            int64_t var_848_1 = 1
+            int64_t var_840_1 = 0
+            
+            if ((sub_100120d14(&var_2a8, &var_850, &data_1001ca388) & 1) == 0)
+                x23_2 = var_850
+                x25_2 = var_848_1
+                x24_1 = var_840_1
+                result = sub_10011ff68(var_568)
+                x21_2 = 0
+                x20_2 = 0
+                x22_2 = 1
+                label_100121ecc:
+                *arg2 = x20_2
+                arg2[1] = x22_2
+                arg2[2] = x21_2
+                arg2[3] = x23_2
+                arg2[4] = x25_2
+                arg2[5] = x24_1
+                return result
+        else
+            sub_10011fe04(&var_850, &var_570, "sdk-pat", 8)
+            
+            if (var_850 == 2)
+                void* var_848
+                
+                if (var_848 == 0)
+                    x20_2 = 0
+                    x21_2 = 0
+                    x22_2 = 1
+                else
+                    sub_100114408(var_848, &var_850)
+                    x20_2 = var_850
+                    x22_2 = var_848
+                    int64_t var_840
+                    x21_2 = var_840
+                
+                result = sub_100120738(&var_570)
+                x24_1 = 0
+                x23_2 = 0
+                x25_2 = 1
+                goto label_100121ecc
+        trap(1)
+
+sub_1001973ec()
+noreturn
+
+--- _ego_cli$cxxbridge1$202$parse_nodejs_options @ 0x100199e44 ---
+int128_t var_90
+int64_t result
+int64_t x23
+int64_t x24
+int128_t v0
+int128_t v1
+result, v0, v1 = sub_1001998b4(&var_90, *(arg1 + 8), *(arg1 + 0x10), x23, x24)
+int128_t var_50
+arg2[4] = var_50
+int128_t var_40
+arg2[5] = var_40
+int128_t var_30
+arg2[6] = var_30
+*arg2 = var_90
+int128_t var_80
+arg2[1] = var_80
+int128_t var_70
+arg2[2] = var_70
+int128_t var_60
+arg2[3] = var_60
+return result
+
+done in 87.1s

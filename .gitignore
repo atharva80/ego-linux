@@ -1,0 +1,11 @@
+# upstream harness (clone separately, see install.sh / build-single.sh)
+ego-lite/
+# RE binaries (official downloads, never redistributed)
+RE/bin/
+*.dmg
+*.exe
+# runtime state
+.local/
+*.log
+__pycache__/
+node_modules/

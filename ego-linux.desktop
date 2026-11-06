@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=ego linux (ego home)
+Comment=ego lite for Linux — AI agent browser dashboard
+Exec=ego-linux gui
+Icon=ego-linux
+Categories=Network;Development;
+Terminal=false
+StartupNotify=true

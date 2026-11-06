@@ -1,0 +1,990 @@
+[2Kint sym._ego_cli_cxxbridge1_202_parse_invocation (int esi, int edx) {
+    loc_0x100121000:
+        [sp, -0x60]! = (x28,2)
+        [sp, 0x10] = (x26,2)
+        [sp, 0x20] = (x24,2)
+        [sp, 0x30] = (x22,2)
+        [sp, 0x40] = (x20,2)
+        [sp, 0x50] = (x29,2)
+        x29 = var_50h
+        sp = sp - 0x3a0
+        x8 = [x0 + 0x10] // 0xc7 // 199 // arg1
+        [sp + 0x18] = x8
+        [sp] = x1    // arg2
+        if !x8 jmp 0x1001210b0 // unlikely
+            
+    loc_0x1001210b0:
+        w8 = 0x8
+        [sp, 0x20] = (xzr,2)
+        [sp + 0x30] = xzr
+        jmp 0x100121130
+         // do {
+    loc_0x100121130:
+        // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001210bc
+        x0 = var_b8h
+        0x100199138 () // 0x100199138(0x1780b8, 0x0, 0x0, 0x0)
+        x0 = var_80h
+        x1 = var_b8h
+        x2 = var_20h
+        0x10011f84c () // 0x10011f84c(0x178080, 0x1780b8, 0x178020, 0x0)
+        x0 = var_b8h
+        0x100120140 () // 0x100120140(0x1780b8, 0x1780b8, 0x178020, 0x0)
+        x8 = [var_80h] // 0x4 // 4
+        if (x8 != 1)
+        b.eq 0x1001212b0 // unlikely
+         // } while (?);
+         // } while (?);
+        }
+        return eax;
+        goto loc_0x100121030
+    loc_0x100121048:
+        x19 = x0
+        x20 = var_b8h
+        x8 = var_b8h
+        x0 = x27
+        0x100114408 () // 0x100114408(0x0, 0x0, 0x0, 0x0)
+        x23 = 0
+        q0 = [x20]   // 0xdb // 219
+        [x19] = q0
+        x8 = [var_c8h] // 0x4 // 4
+        [x19 + 0x10] = x8
+        w8 = 0x1
+        [sp, 0x40] = (x8,2)
+        [sp + 0x50] = x8
+        w22 = 0x8
+        [sp, 0x80] = (xzr,2)
+        [sp + 0x90] = xzr
+        x8 = [var_18h] // 0x4 // 4
+        if (x8 == 1)
+        b.eq 0x1001210c8 // unlikely
+            
+    loc_0x1001210c8:
+        // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121a74
+        x19 = [var_80h] // 0x4 // 4
+        x21 = [var_50h_2] // 0x4 // 4
+        x8 = [var_40h] // 4
+        x8 = x8 - x21
+        if (x23 == x8)
+        b.hi 0x100121acc // unlikely
+            
+    loc_0x100121acc:
+        x0 = var_40h
+        x1 = x21
+        x2 = x23
+        w3 = 0x8
+        w4 = 0x18
+        0x1001971c0 () // sym._cxxbridge1_rust_vec_string_reserve_total+0x834b0 // 0x1001971c0(0x178040, 0x0, 0x0, 0x8)
+        x21 = [var_50h_2] // 0x4 // 4
+        jmp 0x1001210e4
+         // do {
+    loc_0x1001210e4:
+        // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121ae8
+        x8 = x23 + x23,lsl 1
+        x2 = x8 << 3
+        x8 = [var_48h] // 4
+        w9 = 0x18
+        madd x0,x21,x9, x8
+        x1 = x22
+        sym.imp.memcpy ()
+        // void *memcpy(-1, -1, ?)
+         // } while (?);
+         // } while (?);
+         // } while (?);
+        }
+        return eax;
+    loc_0x1001212b0: // orphan
+             x20 = [var_88h]          // 0x4 // 4
+             [sp + 0x40] = x20
+             w8 = 0x1
+             [sp, 0xb8] = (xzr,2)
+             [sp + 0xc8] = xzr
+             x2 = 0x1001ca388
+             
+             x0 = var_40h
+             x1 = var_b8h
+             0x100120d14 ()           // "`=" // 0x100120d14(0x178040, 0x1780b8, 0x1001ca388, 0x0)
+             tbnz w0,0,0x100121a84    // unlikely
+
+    loc_0x100121a84: // orphan
+         brk 0x1
+
+    loc_0x1001212dc: // orphan
+         (x19, 2) = 3
+         x22 = [var_c8h]          // 0x4 // 4
+         x0 = x20
+         0x10011ff68 ()           // 0x10011ff68(0x0, 0x0, 0x0, 0x0)
+         x12 = x22
+         x11 = x19
+         x19 = 0
+         x9 = 0
+         x10 = 0
+         x24 = 0
+         w23 = 0
+         w22 = 0
+         x25 = 0
+         x27 = 0
+         w28 = 0x8
+         w26 = 0x1
+         w20 = 0x1
+         jmp 0x100121400
+
+    loc_0x100121400: // orphan
+         // CODE XREFS from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121320, 0x10012155c
+         x8 = [sp]                // 0x4 // 4
+         [x8] = (x27,2)
+         [x8, 0x10] = (x19,2)
+         [x8, 0x20] = (x20,2)
+         [x8, 0x30] = (x24,2)
+         [x8 + 0x40] = x25
+         [x8 + 0x48] = (byte) w22
+         [x8 + 0x49] = (byte) w23
+         [x8, 0x50] = (x11,2)
+         [x8 + 0x60] = x12
+         sp = arg_3a0h
+         (x29, 2) = 3
+         (x20, 2) = 3
+         (x22, 2) = 3
+         (x24, 2) = 3
+         (x26, 2) = 3
+         (x28, 2) = 3
+         
+
+    loc_0x10012115c: // orphan
+         (q1, 2) = 3
+         [sp, 0x40] = (q1,2)
+         q0 = [var_a0h]           // 0x4 // 4
+         [sp + 0x60] = q0
+         x8 = [var_b0h]           // 0x4 // 4
+         [sp + 0x70] = x8
+         x8 = [var_50h_2]         // 0x4 // 4
+         if !x8 jmp 0x100121330   // unlikely
+
+    loc_0x100121330: // orphan
+         x27 = 0
+         x19 = 0
+         w28 = 0x8
+
+    loc_0x100121360: // orphan
+         x0 = [var_c0h]           // 0x4
+         if !x0 jmp 0x100121324   // unlikely
+
+    loc_0x100121324: // orphan
+         [sp, 0x10] = (xzr,2)
+         w20 = 0x1
+         jmp 0x10012137c
+
+    loc_0x10012137c: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x10012132c
+         x2 = 0x1001a9acb
+         
+         x0 = var_b8h
+         x1 = var_40h
+         w3 = 0xb
+         0x10011fe04 ()           // 0x10011fe04(0x1780b8, 0x178040, 0x1001a9acb, 0xb)
+         x8 = [var_b8h]           // 0x4 // 4
+         if (x8 == 2)
+         b.ne 0x100121a84         // likely
+
+    loc_0x1001213a0: // orphan
+         x0 = [var_c0h]           // 0x4
+         if !x0 jmp 0x100121448   // unlikely
+
+    loc_0x100121448: // orphan
+         x24 = 0
+         x25 = 0
+         w26 = 0x1
+         jmp 0x1001213b8
+
+    loc_0x1001213b8: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121454
+         x1 = 0x1001b913c
+         
+         x0 = var_40h
+         w2 = 0x4
+         0x100127cb0 ()           // 0x100127cb0(0x178040, 0x1001b913c, 0x4, 0x0)
+         x22 = x0
+         x1 = 0x1001a9aec
+         
+         x0 = var_40h
+         w2 = 0x7
+         0x100127cb0 ()           // 0x100127cb0(0x178040, 0x1001a9aec, 0x7, 0x0)
+         x23 = x0
+         x0 = var_40h
+         0x100120738 ()           // 0x100120738(0x178040, 0x1001a9aec, 0x7, 0x0)
+         x12 = 0
+         x11 = 0
+         w21 = 0x1
+         (x10, 2) = 3
+
+    loc_0x1001213a8: // orphan
+         x8 = var_b8h
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         (x24, 2) = 3
+         x25 = [var_c8h]          // 0x4
+
+    loc_0x100121368: // orphan
+         x8 = var_b8h
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         (x9, 2) = 3
+         x8 = [var_c8h]           // 0x4
+         [sp, 0x10] = (x8,2)
+
+    loc_0x10012117c: // orphan
+         x19 = 0
+         x21 = 0
+         x9 = [var_48h]           // 4
+         x22 = x8 << 4
+         x23 = x9 + 8
+         x20 = 0x1001a9af3
+         
+         jmp 0x1001211b0
+
+    loc_0x1001211b0: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121198
+         x8 = [x23]               // 0xde // 222
+         if (x8 == 0xc)
+         b.ne 0x10012119c         // likely
+
+    loc_0x10012119c: // orphan
+         x21 = x21 + 1
+         x19 = x19 + 0x68         // mach0_segment64_1
+         x23 = x23 + 0x10
+         x22 = x22 - 0x10
+         b.eq 0x100121330         // unlikely
+
+    loc_0x1001211bc: // orphan
+         ldur x0,[x23,-8]         // 0xde // 222
+         x1 = x20
+         w2 = 0xc
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         if w0 jmp 0x10012119c    // likely
+
+    loc_0x1001211d0: // orphan
+         x8 = [var_68h]           // 0x4
+         if (x21 == x8)
+         b.hs 0x100121a84         // likely
+
+    loc_0x1001211dc: // orphan
+         x8 = [var_60h]           // 0x4 // 4
+         x20 = x8 + x19
+         x19 = 0xaccb
+         x19 = 0x991e
+         x19 = 0x86f8
+         x19 = 0xb7fd
+         x21 = 0x7275             // 'ur'
+         x21 = 0x15ec
+         x21 = 0x13f2
+         x21 = 0x26fc
+         [sp, 0xb8] = (x21,2)
+         x8 = var_80h
+         x1 = var_b8h
+         x0 = x20
+         0x100127e48 ()           // 0x100127e48(0x0, 0x1780b8, 0x0, 0x0)
+         (x8, 2) = 3
+         x9 = x9 ^ x19
+         x8 = x8 ^ x21
+         x8 = x8 | x9
+         if x8 jmp 0x100121a84    // likely
+
+    loc_0x10012122c: // orphan
+         x0 = x20
+         0x100127f0c ()           // 0x100127f0c(0x0, 0x0, 0x0, 0x0)
+         (x8, 2) = 3
+         w10 = 0x18
+         madd x9,x9,x10, x8
+         x10 = 0x10012097c
+         
+         [sp, 0xb8] = (x10,2)
+         [sp, 0xc8] = (x9,2)
+         [sp, 0xd8] = (x19,2)
+         [sp + 0xf0] = x0
+         x0 = var_80h
+         x1 = var_b8h
+         0x100120a94 ()           // 0x100120a94(0x178080, 0x1780b8, 0x0, 0x0)
+         (x27, 2) = 3
+         x19 = [var_90h]          // 0x4 // 4
+         if !x19 jmp 0x10012133c  // likely
+
+    loc_0x10012133c: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121ab0
+         x2 = 0x1001a9abc
+         
+         x0 = var_b8h
+         x1 = var_40h
+         w3 = 0xf
+         0x10011fe04 ()           // 0x10011fe04(0x1780b8, 0x178040, 0x1001a9abc, 0xf)
+         x8 = [var_b8h]           // 0x4 // 4
+         if (x8 == 2)
+         b.ne 0x100121a84         // likely
+
+    loc_0x100121270: // orphan
+         x8 = [x28 + 0x10]        // 0xe3 // 227
+         if (x8 == 6)
+         b.ne 0x100121294         // likely
+
+    loc_0x100121294: // orphan
+         x8 = x19 + x19,lsl 1
+         x20 = x8 << 3
+         x22 = x28 + 0x10
+         x21 = 0x1001a9a90
+         
+         w23 = 0x652d             // '-e'
+         jmp 0x100121474
+
+    loc_0x100121474: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001212ac
+         (x0, 2) = 3
+         if (x8 == 6)
+         b.eq 0x100121458         // unlikely
+
+    loc_0x100121458: // orphan
+         x1 = x21
+         w2 = 0x6
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         if !w0 jmp 0x100121494   // likely
+
+    loc_0x100121494: // orphan
+         fcn.10019adac ()
+         w0 = 0x33                // '3'
+         w1 = 0x1
+         fcn.1001173f8 ()         // "@3" // fcn.1001173f8(0x33)
+         if !x0 jmp 0x100121b0c   // unlikely
+
+    loc_0x100121b0c: // orphan
+         w0 = 0x1
+         w1 = 0x33                // '3'
+         fcn.1001973ec ()         // sym._ego_cli_cxxbridge1_202_parse_skill_options
+
+    loc_0x1001214a8: // orphan
+         x21 = x0
+         w8 = 0x6a65              // 'ej'
+         w8 = 0x6073              // 's`'
+         [x0 = w8
+         x8 = 0x1001a9b3a
+         
+         (q0, 2) = 3
+         [x0] = (q0,2)
+         q0 = [x8 + 0x20]         // 0xcf // 207
+         [x0 + 0x20] = q0         // mach0_segment64_0
+         w8 = 0x33                // '3'
+         [sp + 0x18] = x8
+         w8 = 0x33                // '3'
+
+    loc_0x100121500: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001214e4
+         ldur x1,[x20,-8]         // 0xdb // 219
+         if x1 jmp 0x1001214e8    // likely
+
+    loc_0x1001214e8: // orphan
+         x0 = [x20]               // 0xdb // 219
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x10012150c: // orphan
+         if !x27 jmp 0x100121524  // likely
+
+    loc_0x100121524: // orphan
+         x0 = var_40h
+         0x100120738 ()           // 0x100120738(0x178040, 0x0, 0x0, 0x0)
+         x19 = 0
+         x9 = 0
+         x10 = 0
+         x24 = 0
+         w23 = 0
+         w22 = 0
+         x25 = 0
+         x27 = 0
+         w28 = 0x8
+         w26 = 0x1
+         w20 = 0x1
+         (x12, 2) = 3
+         jmp 0x100121400
+
+    loc_0x100121510: // orphan
+         x8 = x27 + x27,lsl 1
+         x1 = x8 << 3
+         x0 = x28
+         w2 = 0x8
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x8, 0x0)
+
+    loc_0x100121508: // orphan
+         jmp 0x1001214f4
+
+    loc_0x1001214f4: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121508
+         x20 = x20 + 0x18
+         x19 = x19 - 1
+         b.eq 0x10012150c         // unlikely
+
+    loc_0x100121468: // orphan
+         x22 = x22 + 0x18
+         x20 = x20 - 0x18
+         b.eq 0x10012133c         // unlikely
+
+    loc_0x100121480: // orphan
+         if (x8 == 2)
+         b.ne 0x100121468         // likely
+
+    loc_0x100121488: // orphan
+         w8 = (word) [x0]         // 0xc7 // 199
+         if (w8 == w23)
+         b.ne 0x100121468         // unlikely
+
+    loc_0x10012127c: // orphan
+         x0 = [x28 + 8]           // 0xe3 // 227
+         x1 = 0x1001a9a8a
+         
+         w2 = 0x6
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, 0x2d2d736a65646f6e, ?)
+         if !w0 jmp 0x100121a88   // likely
+
+    loc_0x100121a88: // orphan
+         w8 = 0x18
+         madd x2,x19,x8, x28
+         x0 = var_b8h
+         x1 = x28 + 0x18
+         0x100198734 ()           // 0x100198734(0x1780b8, 0x18, 0x0, 0x0)
+         x8 = [var_b8h]           // 0x4 // 4
+         if (x8 != 1)
+         b.eq 0x100121ab4         // unlikely
+
+    loc_0x100121ab4: // orphan
+         x8 = [var_c0h]           // 0x4
+         if (x8 != 1)
+         b.eq 0x10012133c         // unlikely
+
+    loc_0x100121ac0: // orphan
+         [sp + 0x18] = x8         // U"3\x01"
+         (x21, 2) = 3
+         jmp 0x1001214dc
+
+    loc_0x1001214dc: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121ac8
+         [sp + 0x10] = x8
+         x20 = x28 + 8
+         jmp 0x100121500
+
+    loc_0x100121aa8: // orphan
+         x0 = var_b8h
+         0x100120738 ()           // 0x100120738(0x1780b8, 0x0, 0x0, 0x0)
+         jmp 0x10012133c
+
+    loc_0x100121120: // orphan
+         q0 = [var_40h]
+         [sp + 0x20] = q0
+         x8 = [var_50h_2]         // 0x4
+         [sp + 0x30] = x8
+
+    loc_0x10012110c: // orphan
+         x8 = x19 + x19,lsl 1
+         x1 = x8 << 3
+         x0 = x22
+         w2 = 0x8
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x8, 0x0)
+
+    loc_0x100121100: // orphan
+         x8 = x21 + x23
+         [sp + 0x50] = x8
+         if !x19 jmp 0x100121120  // likely
+
+    loc_0x100121754: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001210ac
+         x8 = x20 + x20,lsl 1
+         x19 = x8 << 3
+         x23 = x27
+         x26 = x27 + x19
+         (x27, 2) = 3
+         if (x28 == 2)
+         b.ne 0x100121780         // likely
+
+    loc_0x100121780: // orphan
+         x9 = 0x1001a9abc
+         
+         w8 = 0xf
+         [x29, -0x70] = (x9,2)
+         x8 = var_70h
+         [sp, 0x20] = (x8,2)
+         x8 = var_b8h
+         x1 = var_20h
+         x0 = 0x1001b8daa
+         
+         0x100114190 ()           // 0x100114190(0x1001b8daa, 0x178020, 0x0, 0x0)
+         (x25, 2) = 3
+         x8 = [var_c8h]           // 0x4 // 4
+         if (x28 == x8)
+         b.ne 0x1001217d0         // unlikely
+
+    loc_0x1001217d0: // orphan
+         if !x25 jmp 0x1001217e4  // likely
+
+    loc_0x1001217e4: // orphan
+         x8 = var_70h
+         [sp, 0x20] = (x8,2)
+         x8 = var_b8h
+         x1 = var_20h
+         x0 = 0x1001b8daf
+         
+         0x100114190 ()           // 0x100114190(0x1001b8daf, 0x178020, 0x0, 0x0)
+         (x25, 2) = 3
+         x2 = [var_c8h]           // 0x4 // 4
+         if (x28 == x2)
+         b.lo 0x10012183c         // unlikely
+
+    loc_0x10012183c: // orphan
+         if !x25 jmp 0x100121850  // likely
+
+    loc_0x100121850: // orphan
+         x9 = 0x1001a9acb
+         
+         w8 = 0xb
+         [x29, -0x70] = (x9,2)
+         x8 = var_70h
+         [sp, 0x20] = (x8,2)
+         x8 = var_b8h
+         x1 = var_20h
+         x0 = 0x1001b8daa
+         
+         0x100114190 ()           // 0x100114190(0x1001b8daa, 0x178020, 0x0, 0x0)
+         (x25, 2) = 3
+         x8 = [var_c8h]           // 0x4 // 4
+         if (x28 == x8)
+         b.ne 0x1001218a0         // unlikely
+
+    loc_0x1001218a0: // orphan
+         if !x25 jmp 0x1001218b4  // likely
+
+    loc_0x1001218b4: // orphan
+         x8 = var_70h
+         [sp, 0x20] = (x8,2)
+         x8 = var_b8h
+         x1 = var_20h
+         x0 = 0x1001b8daf
+         
+         0x100114190 ()           // 0x100114190(0x1001b8daf, 0x178020, 0x0, 0x0)
+         (x25, 2) = 3
+         x2 = [var_c8h]           // 0x4 // 4
+         if (x28 == x2)
+         b.lo 0x100121914         // unlikely
+
+    loc_0x100121914: // orphan
+         if !x25 jmp 0x100121928  // likely
+
+    loc_0x100121928: // orphan
+         if (x28 == 9)
+         b.eq 0x1001216e0         // unlikely
+
+    loc_0x1001216e0: // orphan
+         x0 = x27
+         x1 = 0x1001a9ad6
+         
+         w2 = 0x9
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, 0x6f69737265762d2d, ?)
+         if !w0 jmp 0x100121948   // likely
+
+    loc_0x100121948: // orphan
+         x8 = var_b8h
+         x0 = x26
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x19 = [var_50h_2]        // 0x4 // 4
+         x8 = [var_40h]           // 4
+         if (x19 == x8)
+         b.eq 0x100121990         // unlikely
+
+    loc_0x100121990: // orphan
+         x0 = var_40h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // 0x100199d60(0x178040, 0x0, 0x0, 0x0)
+         jmp 0x100121964
+
+    loc_0x100121964: // orphan
+         // CODE XREFS from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001215e0, 0x100121998
+         x8 = [var_48h]           // 4
+         w9 = 0x18
+         madd x8,x19,x9, x8
+         x9 = var_b8h
+         q0 = [x9]                // 0xd0 // 208
+         [x8] = q0
+         x9 = [var_c8h]           // 0x4 // 4
+         [x8 + 0x10] = x9
+         x8 = x19 + 1
+         [sp + 0x50] = x8
+         jmp 0x100121740
+
+    loc_0x100121740: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x10012198c
+         x27 = x23
+
+    loc_0x1001210c0: // orphan
+         x22 = [var_88h]          // 0x4
+         x23 = [var_8h_2]         // 0x4
+
+    loc_0x1001216f8: // orphan
+         if !x21 jmp 0x1001215a0  // likely
+
+    loc_0x1001215a0: // orphan
+         if (x28 == 6)
+         b.ne 0x100121584         // likely
+
+    loc_0x100121584: // orphan
+         if (x28 == 2)
+         b.ne 0x1001216fc         // likely
+
+    loc_0x1001216fc: // orphan
+         x8 = var_b8h
+         x0 = x26
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x8 = [var_80h]           // 0x4
+         if (x21 == x8)
+         b.eq 0x100121570         // likely
+
+    loc_0x100121570: // orphan
+         x0 = var_80h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // 0x100199d60(0x178080, 0x0, 0x0, 0x0)
+         x8 = [var_88h]           // 0x4
+         [sp + 0x10] = x8
+         jmp 0x100121714
+
+    loc_0x100121714: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121580
+         x8 = [var_10h_2]         // 0x4 // 4
+         w9 = 0x18
+         madd x8,x21,x9, x8
+         x9 = var_b8h
+         q0 = [x9]                // 0xd0 // 208
+         x9 = [var_c8h]           // 0x4 // 4
+         [x8 + 0x10] = x9
+         [x8] = q0
+         x21 = x21 + 1
+         [sp + 0x90] = x21
+         [sp + 8] = x21
+
+    loc_0x10012158c: // orphan
+         w8 = (word) [x27]        // 0xe2 // 226
+         w9 = 0x682d              // '-h'
+         if (w8 == w9)
+         b.ne 0x1001216fc         // likely
+
+    loc_0x10012159c: // orphan
+         jmp 0x1001215c0
+
+    loc_0x1001215c0: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x10012159c
+         x8 = var_b8h
+         x0 = x26
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x19 = [var_50h_2]        // 0x4 // 4
+         x8 = [var_40h]           // 4
+         if (x19 == x8)
+         b.eq 0x100121a78         // unlikely
+
+    loc_0x100121a78: // orphan
+         x0 = var_40h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // 0x100199d60(0x178040, 0x0, 0x0, 0x0)
+         jmp 0x1001215dc
+
+    loc_0x1001215dc: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121a80
+         x21 = 0
+         jmp 0x100121964
+
+    loc_0x1001215a8: // orphan
+         x0 = x27
+         x1 = 0x1001a9adf
+         
+         w2 = 0x6
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, 0x6765706c65682d2d, ?)
+         if w0 jmp 0x1001216fc    // unlikely
+
+    loc_0x100121930: // orphan
+         if (x28 == 2)
+         b.ne 0x1001216f8         // likely
+
+    loc_0x100121938: // orphan
+         w8 = (word) [x27]        // 0xe2 // 226
+         w9 = 0x762d              // '-v'
+         if (w8 == w9)
+         b.ne 0x1001216f8         // likely
+
+    loc_0x100121918: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x1001218e0: // orphan
+         x0 = x19
+         x1 = x27
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         x24 = x0
+         if !x25 jmp 0x10012190c  // likely
+
+    loc_0x10012190c: // orphan
+         if w24 jmp 0x100121928   // unlikely
+
+    loc_0x100121910: // orphan
+         jmp 0x100121604
+
+    loc_0x100121604: // orphan
+         // CODE XREFS from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121838, 0x100121908, 0x100121910
+         x8 = var_b8h
+         x0 = x26
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x19 = [var_50h_2]        // 0x4 // 4
+         x8 = [var_40h]           // 4
+         if (x19 == x8)
+         b.eq 0x1001215e4         // unlikely
+
+    loc_0x1001215e4: // orphan
+         x0 = var_40h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // "\r" // 0x100199d60(0x178040, 0x0, 0x0, 0x0)
+         jmp 0x100121620
+
+    loc_0x100121620: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001215ec
+         x24 = [var_48h]          // 4
+         w8 = 0x18
+         madd x8,x19,x8, x24
+         x9 = var_b8h
+         q0 = [x9]                // 0xd0 // 208
+         [x8] = q0
+         x9 = [var_c8h]           // 0x4 // 4
+         [x8 + 0x10] = x9
+         x25 = x19 + 1
+         [sp + 0x50] = x25
+         if (x28 == 0xf)
+         b.hi 0x100121674         // unlikely
+
+    loc_0x100121674: // orphan
+         w0 = 0x3d                // '='
+         x1 = x27
+         x2 = x28
+         0x100115cd8 ()           // 0x100115cd8(0x3d, 0x0, 0x0, 0x0)
+         tbnz w0,0,0x100121740    // likely
+
+    loc_0x100121688: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121670
+         x26 = x20 + 1
+         x8 = [var_18h]           // 0x4
+         if (x26 == x8)
+         b.hs 0x100121740         // likely
+
+    loc_0x100121698: // orphan
+         x27 = x23
+         w20 = 0x18
+         madd x0,x26,x20, x23
+         x8 = var_b8h
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x8 = [var_40h]           // 4
+         if (x25 == x8)
+         b.eq 0x100121560         // unlikely
+
+    loc_0x100121560: // orphan
+         x0 = var_40h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // 0x100199d60(0x178040, 0x0, 0x0, 0x0)
+         x24 = [var_48h]
+         jmp 0x1001216b8
+
+    loc_0x1001216b8: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x10012156c
+         madd x8,x25,x20, x24
+         x9 = var_b8h
+         q0 = [x9]                // 0xd0 // 208
+         [x8] = q0
+         x9 = [var_c8h]           // 0x4 // 4
+         [x8 + 0x10] = x9
+         x8 = x19 + 2
+         [sp + 0x50] = x8
+         x20 = x26
+         jmp 0x100121744
+
+    loc_0x100121744: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x1001216dc
+         x20 = x20 + 1
+         x8 = [var_18h]           // 0x4
+         if (x20 == x8)
+         b.hs 0x1001210c0         // likely
+
+    loc_0x100121650: // orphan
+         if !x28 jmp 0x100121688  // likely
+
+    loc_0x100121654: // orphan
+         x8 = 0
+
+    loc_0x100121664: // orphan
+         x8 = x8 + 1
+         if (x28 == x8)
+         b.ne 0x100121658         // likely
+
+    loc_0x100121658: // orphan
+         w9 = (byte) [x27 + x8]   // 0xcf000000e2 // 889058230498
+         if (w9 == 0x3d)
+         b.eq 0x100121740         // unlikely
+
+    loc_0x100121670: // orphan
+         jmp 0x100121688
+
+    loc_0x1001218f4: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+         if w24 jmp 0x100121928   // unlikely
+
+    loc_0x100121908: // orphan
+         jmp 0x100121604
+
+    loc_0x1001218a4: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x10012188c: // orphan
+         x0 = x27
+         x1 = x19
+         x2 = x28
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         if !w0 jmp 0x1001215f0   // likely
+
+    loc_0x1001215f0: // orphan
+         if !x25 jmp 0x100121604  // likely
+
+    loc_0x1001215f4: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x100121840: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x100121810: // orphan
+         x0 = x19
+         x1 = x27
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         x24 = x0
+         if !x25 jmp 0x100121834  // likely
+
+    loc_0x100121834: // orphan
+         if w24 jmp 0x100121850   // unlikely
+
+    loc_0x100121838: // orphan
+         jmp 0x100121604
+
+    loc_0x100121824: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x1001217d4: // orphan
+         x0 = x19
+         x1 = x25
+         w2 = 0x1
+         0x100117408 ()           // sym._cxxbridge1_string_drop+0x3648 // 0x100117408(0x0, 0x0, 0x1, 0x0)
+
+    loc_0x1001217bc: // orphan
+         x0 = x27
+         x1 = x19
+         x2 = x28
+         sym.imp.memcmp ()
+                                  // int memcmp(-1, -1, ?)
+         if !w0 jmp 0x1001215f0   // likely
+
+    loc_0x100121770: // orphan
+         w8 = (word) [x27]        // 0xe2 // 226
+         w9 = 0x2d2d              // '--'
+         if (w8 == w9)
+         b.eq 0x10012199c         // unlikely
+
+    loc_0x10012199c: // orphan
+         x8 = var_b8h
+         x0 = x26
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x8 = [var_80h]           // 0x4 // 4
+         x23 = [var_8h_2]         // 0x4 // 4
+         if (x23 == x8)
+         b.ne 0x1001219c4         // likely
+
+    loc_0x1001219c4: // orphan
+         x22 = [var_88h]          // 0x4 // 4
+         w9 = 0x18
+         madd x9,x23,x9, x22
+         x10 = var_b8h
+         q0 = [x10]               // 0xd1 // 209
+         [x9] = q0
+         x10 = [var_c8h]          // 0x4 // 4
+         [x9 + 0x10] = x10
+         x23 = x23 + 1
+         [sp + 0x90] = x23
+         x9 = [var_18h]           // 0x4 // 4
+         x9 = x9 + x9,lsl 1
+         x20 = x9 << 3
+         x9 = x20 - x19
+         x9 = x9 - 0x18
+         x9 = x9 >> 3
+         x10 = xzr | 0xaaaaaaaaaaaaaaaa
+         x10 = 0xaaab
+         x21 = x9 * x10
+         x8 = x8 - x23
+         if (x21 == x8)
+         b.hi 0x100121aec         // unlikely
+
+    loc_0x100121aec: // orphan
+         x0 = var_80h
+         x1 = x23
+         x2 = x21
+         w3 = 0x8
+         w4 = 0x18
+         0x1001971c0 ()           // sym._cxxbridge1_rust_vec_string_reserve_total+0x834b0 // 0x1001971c0(0x178080, 0x0, 0x0, 0x8)
+         (x22, 2) = 3
+         jmp 0x100121a1c
+
+    loc_0x100121a1c: // orphan
+         // CODE XREF from sym._ego_cli_cxxbridge1_202_parse_invocation @ 0x100121b08
+         x8 = x19 + 0x18
+         if (x8 == x20)
+         b.eq 0x1001210c8         // unlikely
+
+    loc_0x100121a28: // orphan
+         x20 = x23
+         x23 = x26 + 0x18
+         x8 = x20 + x20,lsl 1
+         x19 = x8 << 3
+         x20 = x20 + x21
+         x24 = var_b8h
+
+    loc_0x100121a40: // orphan
+         x8 = var_b8h
+         x0 = x23
+         0x100114408 ()           // 0x100114408(0x0, 0x0, 0x0, 0x0)
+         x8 = x22 + x19
+         q0 = [x24]               // 0xdf // 223
+         [x8] = q0
+         x9 = [var_c8h]           // 0x4 // 4
+         [x8 + 0x10] = x9
+         x19 = x19 + 0x18
+         x23 = x23 + 0x18
+         x21 = x21 - 1
+         b.ne 0x100121a40         // likely
+
+    loc_0x100121a70: // orphan
+         x23 = x20
+         jmp 0x1001210c8
+
+    loc_0x1001219b8: // orphan
+         x0 = var_80h
+         0x100199d60 ()           // fcn.1001998b4+0x4ac // 0x100199d60(0x178080, 0x0, 0x0, 0x0)
+         x8 = [var_80h]           // 0x4
+
+}
