@@ -440,9 +440,12 @@ const ego = {
   sendCDPMessage(msg) {
     if (ws.readyState !== WebSocket.OPEN) { ego.onSendCDPMessageError?.("CDP channel unavailable", "EGO_CDP_CHANNEL_UNAVAILABLE"); return; }
     try { const m = JSON.parse(msg); if (m.method === "Target.activateTarget" && m.params?.targetId) { const t = tasks.get(selected); if (t) t.activatedTargetId = m.params.targetId; } } catch {}
+    // Native parity: raw CDP is blocked while the Space is under user control.
+    const ct = tasks.get(selected);
+    if (ct?.userControl) { ego.onSendCDPMessageError?.("The task is under user control", "EGO_TASK_SPACE_USER_IN_CONTROL"); return; }
     ws.send(msg);
   },
-  async getBrowserVersion() { try { const v = await cdpCall("Browser.getVersion"); return { currentVersion: (v.product || "Chromium").replace(/^HeadlessChrome\//, "").replace(/^Chrome\//, "") || "Chromium", updateAvailable: false }; } catch { return { currentVersion: "Chromium", updateAvailable: false }; } },
+  async getBrowserVersion() { return { currentVersion: VERSION, updateAvailable: false }; },
   async listProfiles() {
     const seen = new Map([["Default", { id: "Default", name: "Personal", isDefault: true }]]);
     for (const base of [join(homedir(), ".config/google-chrome"), join(homedir(), ".config/chromium")]) {
@@ -496,11 +499,12 @@ const ego = {
     for (const id of targets) { const t = tasks.get(id); if (t) { await cdpCall("Target.disposeBrowserContext", { browserContextId: t.browserContextId }).catch(() => {}); tasks.delete(id); if (selected === id) selected = null; } }
     return `${targets.length} task space(s) deleted.`;
   },
-  async closeTaskSpace() { const t = tasks.get(selected); if (!t) return { error: "Task space not found", error_code: "EGO_TASK_SPACE_NOT_FOUND" }; await cdpCall("Target.disposeBrowserContext", { browserContextId: t.browserContextId }).catch(() => {}); tasks.delete(selected); return `${selected} task space closed.`; },
-  async completeTaskSpace() { const t = tasks.get(selected); if (!t) return { error: "Task space not found", error_code: "EGO_TASK_SPACE_NOT_FOUND" }; t.userControl = true; return `${selected} task space completed.`; },
+  async closeTaskSpace() { const t = tasks.get(selected); if (!t) return { error: "Task space not found", error_code: "EGO_TASK_SPACE_NOT_FOUND" }; if (t.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" }; await cdpCall("Target.disposeBrowserContext", { browserContextId: t.browserContextId }).catch(() => {}); tasks.delete(selected); return `${selected} task space closed.`; },
+  async completeTaskSpace() { const t = tasks.get(selected); if (!t) return { error: "Task space not found", error_code: "EGO_TASK_SPACE_NOT_FOUND" }; if (t.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" }; t.userControl = true; return `${selected} task space completed.`; },
   async handOffTaskSpace() { const t = tasks.get(selected); if (t) t.userControl = true; return `${selected} has been handed off to the user.`; },
   async takeOverTaskSpace() { const t = tasks.get(selected); if (t) t.userControl = false; return `${selected} has been taken over by the agent.`; },
   async setAgentTaskState(state) {
+    const ct0 = tasks.get(selected); if (ct0?.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" };
     try {
       const t = tasks.get(selected); if (t) { const tab = await ensureTab(t); const sid = await attach(tab.targetId);
         await cdpCall("Runtime.evaluate", { expression: `document.getElementById('ego-linux-state')?.remove(); (function(s){var d=document.createElement('div'); d.id='ego-linux-state'; d.style.cssText='position:fixed;top:8px;left:8px;z-index:2147483647;background:#111;color:#fff;font:12px system-ui;padding:4px 8px;border-radius:4px;opacity:.9;pointer-events:none'; d.textContent='ego: '+s; d.setAttribute('aria-hidden','true'); document.body.appendChild(d);})(${JSON.stringify(String(state ?? ""))})`, returnByValue: true }, sid).catch(() => {});
@@ -522,6 +526,7 @@ const ego = {
     return `${selected} agent gesture shown.`;
   },
   async animationHighlightMouseToPosition(x, y) {
+    const ct0 = tasks.get(selected); if (ct0?.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" };
     try {
       const t = tasks.get(selected); if (t) { const tab = await ensureTab(t); const sid = await attach(tab.targetId);
         await cdpCall("Runtime.evaluate", { expression: `(function(x,y){var d=document.createElement('div'); d.style.cssText='position:fixed;left:'+(x-14)+'px;top:'+(y-14)+'px;width:28px;height:28px;border:3px solid #e33;border-radius:50%;z-index:2147483647;pointer-events:none;transition:all .3s'; d.setAttribute('aria-hidden','true'); document.body.appendChild(d); setTimeout(function(){d.style.transform='scale(1.6)'; d.style.opacity='0';},50); setTimeout(function(){d.remove();},1300); return 1;})(${Number(x)||0},${Number(y)||0})`, returnByValue: true }, sid).catch(() => {});
@@ -552,22 +557,25 @@ const bundle = await loadBundle();
 if (SERVE) {
   mkdirSync(DAEMON_DIR, { recursive: true });
   try { rmSync(DAEMON_SOCK, { force: true }); } catch {}
+  let execQueue = Promise.resolve(); // serialize agent scripts: global `selected`/sessions are shared
   const server = net.createServer({ allowHalfOpen: true }, (sock) => {
     sock.on("error", () => {});
     let buf = ""; sock.setEncoding("utf8");
-    sock.on("data", async (d) => {
+    sock.on("data", (d) => {
       buf += d;
       const idx = buf.indexOf("\n\x00END\x00\n");
       if (idx < 0) return;
       const code = buf.slice(0, idx);
       if (code.trim() === "__STOP__") { sock.end("daemon stopped\n"); setTimeout(() => { kill(); try { rmSync(DAEMON_SOCK, { force: true }); } catch {} process.exit(0); }, 100); return; }
-      let out = "", errOut = "";
-      const stdout = { write: (c) => { out += c; return true; } };
-      const stderr = { write: (c) => { errOut += c; return true; } };
-      let exitCode = 0;
-      try { exitCode = await bundle.runMain({ argv: [], stdinText: code, stdout, stderr }) || 0; }
-      catch (e) { exitCode = 1; errOut += (e?.stack || String(e)) + "\n"; }
-      sock.end(out + (errOut ? errOut : "") + `\n__EXIT__:${exitCode}\n`);
+      execQueue = execQueue.then(async () => {
+        let out = "", errOut = "";
+        const stdout = { write: (c) => { out += c; return true; } };
+        const stderr = { write: (c) => { errOut += c; return true; } };
+        let exitCode = 0;
+        try { exitCode = await bundle.runMain({ argv: [], stdinText: code, stdout, stderr }) || 0; }
+        catch (e) { exitCode = 1; errOut += (e?.stack || String(e)) + "\n"; }
+        try { sock.end(out + (errOut ? errOut : "") + `\n__EXIT__:${exitCode}\n`); } catch {}
+      }).catch(() => {});
     });
   });
   server.listen(DAEMON_SOCK, () => console.error(`ego-linux daemon listening on ${DAEMON_SOCK}`));
