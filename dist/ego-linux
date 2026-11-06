@@ -241,8 +241,12 @@ async function taskTabs(task) {
 }
 async function ensureTab(task, url = "about:blank") {
   const tabs = await taskTabs(task);
-  if (tabs.length) return tabs[tabs.length - 1];
+  if (tabs.length) {
+    const act = task.activatedTargetId && tabs.find(t => t.targetId === task.activatedTargetId);
+    return act || tabs[tabs.length - 1];
+  }
   const { targetId } = await cdpCall("Target.createTarget", { url, browserContextId: task.browserContextId });
+  task.activatedTargetId = targetId;
   return { targetId, url, title: "", type: "page" };
 }
 const ANTI_DETECT = `(()=>{try{Object.defineProperty(navigator,'webdriver',{get:()=>undefined,configurable:true});}catch(e){} try{for(const k of Object.keys(window)){if(k.indexOf('cdc_')===0){try{delete window[k]}catch(e){}}}}catch(e){}})()`;
@@ -435,6 +439,7 @@ const ego = {
   onCDPMessage: null, onSendCDPMessageError: null,
   sendCDPMessage(msg) {
     if (ws.readyState !== WebSocket.OPEN) { ego.onSendCDPMessageError?.("CDP channel unavailable", "EGO_CDP_CHANNEL_UNAVAILABLE"); return; }
+    try { const m = JSON.parse(msg); if (m.method === "Target.activateTarget" && m.params?.targetId) { const t = tasks.get(selected); if (t) t.activatedTargetId = m.params.targetId; } } catch {}
     ws.send(msg);
   },
   async getBrowserVersion() { try { const v = await cdpCall("Browser.getVersion"); return { currentVersion: (v.product || "Chromium").replace(/^HeadlessChrome\//, "").replace(/^Chrome\//, "") || "Chromium", updateAvailable: false }; } catch { return { currentVersion: "Chromium", updateAvailable: false }; } },
@@ -529,6 +534,7 @@ const ego = {
     if (!t) return { error: "Task space not selected", error_code: "EGO_TASK_SPACE_NOT_SELECTED" };
     if (t.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" };
     const { targetId } = await cdpCall("Target.createTarget", { url: String(url), browserContextId: t.browserContextId });
+    t.activatedTargetId = targetId;
     return { targetId };
   },
   async listTabs() {
@@ -536,7 +542,7 @@ const ego = {
     if (!t) return { error: "Task space not selected", error_code: "EGO_TASK_SPACE_NOT_SELECTED" };
     if (t.userControl) return { error: "manual_takeover", error_code: "EGO_TASK_SPACE_USER_IN_CONTROL" };
     const tabs = await taskTabs(t);
-    return { tabs: tabs.map((tab, i) => ({ index: i, targetId: tab.targetId, url: tab.url, title: tab.title, active: i === tabs.length - 1 })) };
+    return { tabs: tabs.map((tab, i) => ({ index: i, targetId: tab.targetId, url: tab.url, title: tab.title, active: t.activatedTargetId ? tab.targetId === t.activatedTargetId : i === tabs.length - 1 })) };
   },
   async snapshot(options) { return snapshotImpl(options || {}); },
 };
