@@ -1,0 +1,310 @@
+Chunk(streamName, chunk, encoding) {
+    if (chunk == null) {
+      return;
+    }
+
+    if (typeof chunk === 'string') {
+      appendText(streamName, chunk);
+      return;
+    }
+
+    if (Buffer.isBuffer(chunk) || ArrayBuffer.isView(chunk)) {
+      appendText(
+          streamName,
+          Buffer.from(chunk).toString(
+              typeof encoding === 'string' ? encoding : undefined));
+      return;
+    }
+
+    if (typeof chunk === 'object') {
+      return;
+    }
+  }
+
+  function appendError(error) {
+    if (error == null) {
+      return;
+    }
+
+    if (typeof error?.stack === 'string' && error.stack.length > 0) {
+      // One chunk, so streamed output doesn't show the newline on its own.
+      appendText(
+          'stderr',
+          error.stack.endsWith('\n') ? error.stack : `${error.stack}\n`);
+      return;
+    }
+
+    appendChunk('stderr', String(error));
+  }
+
+  function handleFatalError(error) {
+    appendError(error);
+    process.exit(1);
+  }
+
+  function handleUnhandledRejection(reason) {
+    handleFatalError(reason);
+  }
+
+  let fatalErrorHandlersInstalled = false;
+
+  function installFatalErrorHandlers() {
+    if (fatalErrorHandlersInstalled) {
+      return;
+    }
+    process.prependListener('uncaughtException', handleFatalError);
+    process.prependListener('unhandledRejection', handleUnhandledRejection);
+    fatalErrorHandlersInstalled = true;
+  }
+
+  function suspendFatalErrorHandlersForRepl() {
+    if (!fatalErrorHandlersInstalled) {
+      return;
+    }
+    process.removeListener('uncaughtException', handleFatalError);
+    process.removeListener('unhandledRejection', handleUnhandledRejection);
+    fatalErrorHandlersInstalled = false;
+  }
+
+  function makeBufferStream(streamName) {
+    return new Writable({
+      decodeStrings: false,
+      write(chunk, encoding, callback) {
+        appendChunk(streamName, chunk, encoding);
+        callback(null);
+      }
+    });
+  }
+
+  const stdout = makeBufferStream('stdout');
+  const stderr = makeBufferStream('stderr');
+
+  globalThis.__egoNodeOutputCapture = {
+    clear() {
+      buffer.length = 0;
+    },
+
+    take() {
+      const output = buffer.join('');
+      buffer.length = 0;
+      return output;
+    },
+
+    // Streams all later output to `callback(streamName, text)`, where
+    // `streamName` is 'stdout' or 'stderr'. take() stays empty afterwards.
+    setSink(callback) {
+      sink = callback;
+    },
+  };
+
+  globalThis.__egoInstallFatalErrorHandlers = installFatalErrorHandlers;
+  globalThis.__egoSuspendPreloadFatalErrorHandlersForRepl =
+      suspendFatalErrorHandlersForRepl;
+
+  ObjectDefineProperty(process, 'stdout', {
+    __proto__: null,
+    configurable: true,
+    enumerable: true,
+    get: () => stdout,
+  });
+  ObjectDefineProperty(process, 'stderr', {
+    __proto__: null,
+    configurable: true,
+    enumerable: true,
+    get: () => stderr,
+  });
+})();
+
+const {
+  markBootstrapComplete,
+} = require('internal/process/pre_execution');
+const {
+  evalModuleEntryPoint,
+  evalTypeScript,
+  parseAndEvalCommonjsTypeScript,
+  parseAndEvalModuleTypeScript,
+  evalScript,
+} = require('internal/process/execution');
+const {addBuiltinLibsToObject} = require('internal/modules/helpers');
+const {getOptionValue} = require('internal/options');
+const {runEntryPointWithESMLoader} = require('internal/modules/run_main');
+const {Readable} = require('stream');
+const {initializeGlobalConsole} = require('internal/console/constructor');
+
+// LoadEnvironment's embedding entry point already prepared the main thread.
+// Rebind console after replacing stdout/stderr with the capture streams.
+initializeGlobalConsole(require('internal/console/global'));
+addBuiltinLibsToObject(globalThis, '<eval>');
+markBootstrapComplete();
+
+let egoReplServer;
+let egoReplInitialPromptCleared = false;
+
+function getEgoReplServer() {
+  if (egoReplServer === undefined) {
+    const input = new Readable({read() {}});
+    runEntryPointWithESMLoader(() => {
+      const cliRepl = require('internal/repl');
+      cliRepl.createInternalRepl(
+          process.env, {
+            input,
+            output: process.stdout,
+            prompt: '',
+            terminal: false,
+          },
+          (error, repl) => {
+            if (error) {
+              throw error;
+            }
+            egoReplServer = repl;
+          });
+    });
+    if (egoReplServer === undefined) {
+      throw new Error('ego-browser nodejs REPL initialization is async');
+    }
+    globalThis.__egoNodeOutputCapture.clear();
+  }
+
+  return egoReplServer;
+}
+
+function getReplBufferedCommand(replServer) {
+  const bufferedCommandSymbol =
+      Object.getOwnPropertySymbols(replServer)
+          .find(
+              (symbol) => symbol.description === 'bufferedCommand' ||
+                  String(symbol) === 'Symbol(bufferedCommand)');
+  if (bufferedCommandSymbol === undefined) {
+    return '';
+  }
+  return replServer[bufferedCommandSymbol];
+}
+
+function hasReplBufferedCommand(replServer) {
+  if (getReplBufferedCommand(replServer).length > 0) {
+    return true;
+  }
+  return replServer.lines?.level?.length > 0;
+}
+
+function runReplCell(replServer, filename, source, options) {
+  const displayPrompt = replServer.displayPrompt;
+  const editorMode = replServer.editorMode;
+  const ignoreUndefined = replServer.ignoreUndefined;
+  globalThis.__egoSuspendPreloadFatalErrorHandlersForRepl();
+  replServer.clearBufferedCommand();
+  replServer.lines.level = [];
+
+  let completed = false;
+  function restoreReplState() {
+    replServer.displayPrompt = displayPrompt;
+    replServer.editorMode = editorMode;
+    replServer.ignoreUndefined = ignoreUndefined;
+  }
+
+  function completeReplEvaluation() {
+    if (completed) {
+      return;
+    }
+    completed = true;
+    restoreReplState();
+    globalThis.__egoCompleteReplEvaluation();
+  }
+
+  replServer.displayPrompt = function(...args) {
+    if (hasReplBufferedCommand(replServer)) {
+      replServer.clearBufferedCommand();
+      replServer.lines.level = [];
+      console.error('Uncaught SyntaxError: Unexpected end of input');
+      completeReplEvaluation();
+      return;
+    }
+    displayPrompt.apply(this, args);
+    completeReplEvaluation();
+  };
+
+  try {
+    replServer.ignoreUndefined = options?.print !== true;
+    replServer.editorMode = true;
+    replServer.write(source);
+    replServer.editorMode = false;
+    replServer.write('\n');
+  } catch (error) {
+    if (typeof error?.stack === 'string' && error.stack.length > 0) {
+      console.error(error.stack);
+    } else {
+      console.error(String(error));
+    }
+    completeReplEvaluation();
+  }
+}
+
+globalThis.__egoEvaluateReplScript =
+    (filename, source, options = undefined) => {
+      const replServer = getEgoReplServer();
+
+      if (!egoReplInitialPromptCleared) {
+        globalThis.__egoNodeOutputCapture.clear();
+        egoReplInitialPromptCleared = true;
+      }
+
+      if (options?.inputType === 'repl-cell') {
+        runReplCell(replServer, filename, source, options);
+        return;
+      }
+
+      const displayPrompt = replServer.displayPrompt;
+      globalThis.__egoSuspendPreloadFatalErrorHandlersForRepl();
+      replServer.displayPrompt = function(...args) {
+        replServer.displayPrompt = displayPrompt;
+        displayPrompt.apply(this, args);
+        globalThis.__egoCompleteReplEvaluation();
+      };
+      try {
+        replServer.write(source);
+      } catch (error) {
+        replServer.displayPrompt = displayPrompt;
+        throw error;
+      }
+    };
+
+function evaluateScript(filename, source, options = undefined) {
+  const inputType = options?.inputType;
+  const print = options?.print === true;
+  const stripTypes = options?.stripTypes === true;
+
+  if (inputType === 'module') {
+    return evalModuleEntryPoint(source, print);
+  }
+
+  if (inputType === 'module-typescript' && stripTypes) {
+    return parseAndEvalModuleTypeScript(source, print);
+  }
+
+  if (inputType === 'commonjs') {
+    return evalScript(filename, source, false, print, false);
+  }
+
+  if (inputType === 'commonjs-typescript' && stripTypes) {
+    return parseAndEvalCommonjsTypeScript(
+        filename, source, false, print, false);
+  }
+
+  if (stripTypes) {
+    return evalTypeScript(filename, source, false, print, false);
+  }
+
+  return evalScript(filename, source, false, print, false);
+}
+
+globalThis.__egoEvaluatePreloadScript =
+    (filename, source, options = undefined) => {
+      globalThis.__egoInstallFatalErrorHandlers();
+      return evaluateScript(filename, source, options);
+    };
+
+globalThis.__egoEvaluateScript = (filename, source, options = undefined) => {
+  globalThis.__egoInstallFatalErrorHandlers();
+  return evaluateScript(filename, source, options);
+};
+ ../../ego/third_party/node/src/node_mutex.h:254 (0) == (Traits::mutex_init(&mutex_)) node::MutexBase<node::LibuvRwlockTraits>::MutexBase() [Traits = node::LibuvRwlockTraits] internal/deps/acorn/acorn-walk/dist/walk internal/deps/acorn/acorn/dist/acorn internal/deps/amaro/dist/index internal/deps/minimatch/index internal/deps/undici/undici _http_agent _http_client _http_common _http_incoming _http_outgoing _http_server _stream_duplex _stream_passthrough _stream_readable _stream_transform _stream_wrap _stream_writable _tls_common _tls_wrap assert/strict async_hooks child_process constants crypto dgram diagnostics_channel dns/promises fs/promises http2 inspector/promises internal/abort_controller internal/assert internal/assert/assertion_error internal/assert/calltracker internal/assert/myers_diff internal/assert/utils internal/async_context_frame internal/async_hooks internal/async_local_storage/async_context_frame internal/async_local_storage/async_hooks internal/async_local_storage/run_scope internal/blob internal/blocklist internal/bootstrap/node internal/bootstrap/realm internal/bootstrap/shadow_realm internal/bootstrap/switches/does_not_own_process_state internal/bootstrap/switches/does_own_process_state internal/bootstrap/switches/is_main_thread internal/bootstrap/switches/is_not_main_thread internal/bootstrap/web/exposed-wildcard internal/bootstrap/web/exposed-window-or-worker internal/buffer internal/child_process internal/child_process/serialization internal/cli_table internal/cluster/child internal/cluster/primary internal/cluster/round_robin_handle internal/cluster/shared_handle internal/cluster/utils internal/cluster/worker internal/console/constructor internal/console/global internal/constants internal/crypto/aes internal/crypto/argon2 internal/crypto/certificate internal/crypto/cfrg internal/crypto/chacha20_poly1305 internal/crypto/cipher internal/crypto/diffiehellman internal/crypto/ec internal/crypto/hash internal/crypto/hashnames internal/crypto/hkdf internal/crypto/kem internal/crypto/kem_hybrids internal/crypto/keygen internal/crypto/keys internal/crypto/mac internal/crypto/ml_dsa internal/crypto/ml_kem internal/crypto/pbkdf2 internal/crypto/provider_mac internal/crypto/random internal/crypto/rsa internal/crypto/scrypt internal/crypto/sig internal/crypto/util internal/crypto/webcrypto internal/crypto/webcrypto_util internal/crypto/webidl internal/crypto/x509 internal/data_url internal/debugger/inspect internal/debugger/inspect_client internal/debugger/inspect_helpers internal/debugger/inspect_probe internal/debugger/inspect_repl internal/dgram internal/dns/callback_resolver internal/dns/promises internal/dns/utils internal/encoding internal/encoding/single-byte internal/encoding/util internal/error_serdes internal/errors internal/errors/error_source internal/event_target internal/events/abort_listener internal/events/symbols internal/file internal/fixed_queue internal/freelist internal/freeze_intrinsics internal/fs/cp/cp-sync internal/fs/cp/cp internal/fs/dir internal/fs/glob internal/fs/promises internal/fs/read/context internal/fs/recursive_watch internal/fs/rimraf internal/fs/streams internal/fs/sync_write_stream internal/fs/utils internal/fs/watchers internal/heap_utils internal/histogram internal/http internal/http2/compat internal/http2/core internal/http2/util internal/inspector/network internal/inspector/network_http internal/inspector/network_http2 internal/inspector/network_resources internal/inspector/network_undici internal/inspector/webstorage internal/inspector_async_hook internal/inspector_network_tracking internal/js_stream_socket internal/legacy/processbinding internal/linkedlist internal/locks internal/main/check_syntax internal/main/embedding internal/main/eval_stdin internal/main/eval_string internal/main/inspect internal/main/mksnapshot internal/main/print_help internal/main/prof_process internal/main/repl internal/main/run_main_module internal/main/test_runner internal/main/watch_mode internal/main/worker_thread internal/mime internal/modules/cjs/loader internal/modules/customization_hooks internal/modules/esm/assert internal/modules/esm/create_dynamic_module internal/modules/esm/get_format internal/modules/esm/hooks internal/modules/esm/initialize_import_meta internal/modules/esm/load internal/modules/esm/loader internal/modules/esm/module_job internal/modules/esm/module_map internal/modules/esm/resolve internal/modules/esm/shared_constants internal/modules/esm/translators internal/modules/esm/utils internal/modules/esm/worker internal/modules/helpers internal/modules/package_json_reader internal/modules/package_map internal/modules/run_main internal/modules/typescript internal/navigator internal/net internal/options internal/original-fs/cp/cp-sync internal/original-fs/cp/cp internal/original-fs/dir internal/original-fs/glob internal/original-fs/promises internal/original-fs/read/context internal/original-fs/recursive_watch internal/original-fs/rimraf internal/original-fs/streams internal/original-fs/sync_write_stream internal/original-fs/utils internal/original-fs/watchers internal/per_context/domexception internal/per_context/messageport internal/per_context/primordials internal/perf/event_loop_delay internal/perf/event_loop_utilization internal/perf/nodetiming internal/perf/observe internal/perf/performance internal/perf/perfo

@@ -216,6 +216,36 @@ Evidence files in `RE/`: `ego-browser-afl.txt` (279 functions),
   generated code, not data), cross-origin iframe AX (browser
   privilege), and stripped-function recovery (no symbols exist).
 
+### Binary Ninja headless (V6, BN 4.2.6455 commercial) — deep dive
+- BN on `ego Framework` (258 MB): **OOM-Killed** on this 15 GB RAM
+  machine (`RE/bn-fw.log`: `Killed`). This is the hard ceiling for
+  BN/r2/Ghidra-class analysis here — the fork binary cannot be
+  fully analysed on this hardware. `rabin2`/`r2 aa` already proved
+  the ceiling: stripped, 3 exports, 1782 import stubs.
+- Extracted the fork's Node preload JS from `__const`
+  (`RE/node-service-js.txt`, at file offset `0xe465619`):
+  `__egoNodeOutputCapture` (stdout/stderr buffering, `take()`/`setSink`),
+  fatal-error handlers (`installFatalErrorHandlers`,
+  `suspendFatalErrorHandlersForRepl`), `__egoEvaluateScript/
+  ReplScript/PreloadScript`, `__egoCompleteReplEvaluation`.
+  This is the `ego://services/node/resources/index.js` preload —
+  it explains how agent scripts' output is captured in the fork.
+  Our shim's output handling mirrors it via the harness sink.
+- Snapshot binding strings (`RE/snap-*.txt`, at `0xf250158`):
+  `includeActionMarks/interactiveOnly/includeStableLocator/
+  maxResultLength/refs` are C++ property names, not JS — the
+  snapshot engine is C++ in the fork, with no recoverable JS
+  implementation in the binary. Action-marks format is generated
+  code, not data; it cannot be extracted by strings/BN without
+  symbol-guided disassembly (which OOMs / has no symbols).
+- Fork source tree recovered from assert strings
+  (`RE/fork-ego-files.txt`, 123 files): `ego/browser/ui/mainland/*`
+  (Spaces UI), `agent_mouse_layer_view`/`task_status_ring_view`
+  (gesture overlay), `data_import/*` (Chrome+Safari import),
+  `ego_cli_bridge_host` (CLI bridge), `ego/services/node|chat|
+  command_executor`. This is the complete patch surface a Linux
+  Chromium build would need — file names only, no contents.
+
 ### Binary Ninja headless (V6, BN 4.2.6455 commercial)
 - Found on this machine at
   `~/abhijit_binja/binaryninja_linux_stable_commercial/binaryninja/`
